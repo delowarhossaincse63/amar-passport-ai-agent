@@ -1,67 +1,123 @@
 # Amar Passport AI Agent
 
-A CrewAI-style multi-agent system for guiding Bangladesh e-passport applicants through eligibility, document checks, form guidance, and appointment planning.
+A multi-agent AI assistant for Bangladesh e-passport applicants. This repository provides a CrewAI-style workflow to guide users through eligibility checks, document verification, form completion, and appointment planning.
+
+## 🚀 What it does
+
+- Validates applicant eligibility rules
+- Checks required document completeness
+- Helps with form guidance and applicant data extraction
+- Plans appointments with external tools and API integrations
+- Exposes a FastAPI service for chat-based interactions
+
+## 🧱 Built with
+
+- Python 3.11+
+- FastAPI
+- Pydantic
+- Uvicorn
+- PyTest
+- Scikit-learn
 
 ## Quick start
 
 1. Create and activate a virtual environment.
-2. Install dependencies: `pip install -r requirements.txt`
-3. Run the API: `uvicorn src.api.main:app --reload --port 8001`
-4. Visit `http://127.0.0.1:8001/docs` for the Swagger UI.
+
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the API locally:
+
+   ```bash
+   uvicorn src.api.main:app --reload --port 8001
+   ```
+
+4. Open the Swagger UI:
+
+   ```text
+   http://127.0.0.1:8001/docs
+   ```
 
 ## Docker deployment
 
 1. Build the image:
+
    ```bash
    docker build -t amar-passport-ai-agent .
    ```
+
 2. Run the container:
+
    ```bash
    docker run -p 8000:8000 amar-passport-ai-agent
    ```
-3. Or use docker-compose:
+
+3. Or use Docker Compose:
+
    ```bash
    docker compose up --build
    ```
-4. Access the live app at `http://127.0.0.1:8000/`.
+
+4. Access the service at:
+
+   ```text
+   http://127.0.0.1:8000/
+   ```
+
+## Environment variables
+
+Copy `.env.example` to `.env` and fill in the required values.
+
+- `OPENAI_API_KEY`
+- `VECTOR_DB_URL`
+- `APPOINTMENT_API_KEY`
+- `ENVIRONMENT`
 
 ## Project structure
 
-- `src/agents` - specialist agents
-- `src/tools` - optional integrations
-- `src/rag` - retrieval layer and knowledge base scaffolding
-- `src/schemas` - shared Pydantic models
-- `src/api` - FastAPI entrypoint
-- `tests` - smoke tests for the initial scaffolding
+- `src/crew.py` — orchestrates the multi-agent workflow
+- `src/api/main.py` — FastAPI entrypoint and request handlers
+- `src/agents/` — domain-specific agent modules
+- `src/rag/` — retrieval and knowledge base support
+- `src/schemas/` — shared Pydantic models
+- `src/tools/` — external integration utilities
+- `tests/` — automated test coverage for agents and retrieval logic
 
-## CI / GitHub
+## Tests
 
-This repository includes a GitHub Actions workflow to run tests and build the Docker image on push or pull request. To enable continuous deployment, add a registry secret and update the workflow to push the built image to GitHub Container Registry or your cloud provider.
+Run the test suite with:
 
-Quick steps to enable CI on GitHub:
+```bash
+pytest -q
+```
 
-1. Create a repository on GitHub and push this project.
-2. Enable Actions in the repository settings (workflows are already included at `.github/workflows/ci.yml`).
-3. (Optional) Add repository secrets for `CR_PAT` or registry credentials if you want to push images.
+## CI / GitHub Actions
+
+This repository includes a CI workflow at `.github/workflows/ci.yml` that:
+
+- installs dependencies
+- runs tests with `pytest`
+- builds a Docker image
 
 ## Render deployment
 
-This repo includes `render.yaml` for Render deployment using Docker.
+`render.yaml` is included for deploying this service on Render using Docker.
 
-Steps to deploy on Render:
+To deploy:
 
-1. Create a new Web Service on Render.
-2. Connect your GitHub repository.
-3. Choose the `main` branch and Docker as the environment.
-4. Render will detect `render.yaml` and use the Dockerfile.
-5. Add these environment variables in Render settings:
-   - `OPENAI_API_KEY`
-   - `VECTOR_DB_URL`
-   - `APPOINTMENT_API_KEY`
-   - `ENVIRONMENT=production`
+1. Create a Render Web Service.
+2. Connect the GitHub repository.
+3. Select Docker deployment.
+4. Add required environment variables from `.env`.
 
-Render will then build and deploy the app. The service will be live on the Render-provided URL.
+## License
 
-Badge (replace `<OWNER>` and `<REPO>`):
-
-![CI](https://github.com/<OWNER>/<REPO>/actions/workflows/ci.yml/badge.svg)
+This project is released under the MIT License.

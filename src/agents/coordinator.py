@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import os
 import re
 
 from src.agents.document_verification_agent import DocumentVerificationAgent
 from src.agents.eligibility_agent import EligibilityAgent
 from src.agents.fee_appointment_agent import FeeAppointmentAgent
 from src.agents.form_filling_agent import FormFillingAgent
+from src.agents.openai_applicant_extractor import OpenAIApplicantExtractor, RegexApplicantExtractor
 from src.schemas.models import CrewResponse
 
 
@@ -15,6 +17,13 @@ class CoordinatorAgent:
         self.document_verification_agent = DocumentVerificationAgent()
         self.fee_appointment_agent = FeeAppointmentAgent()
         self.form_filling_agent = FormFillingAgent()
+        self.applicant_extractor = self._create_applicant_extractor()
+
+    def _create_applicant_extractor(self):
+        api_key = os.getenv("OPENAI_API_KEY")
+        if api_key:
+            return OpenAIApplicantExtractor(api_key=api_key)
+        return RegexApplicantExtractor()
 
     def run(self, message: str, session_id: str) -> CrewResponse:
         eligibility = self.eligibility_agent.run(message)
@@ -25,21 +34,20 @@ class CoordinatorAgent:
             case_type=eligibility.case_type,
             service_level="regular",
         )
-        # Try to extract name and NID from the user's message. Do not fabricate values.
+        # Extract applicant fields from free text using OpenAI structured extraction.
+        extraction = self.applicant_extractor.extract(message)
+
         applicant_data: dict = {
             "case_type": eligibility.case_type,
             "page_count": 36,
             "required_documents": eligibility.required_documents,
         }
-
-        nid_match = re.search(r"\b(\d{10})\b", message)
-        if nid_match:
-            applicant_data["nid"] = nid_match.group(1)
-
-        # Simple name extraction: look for patterns like 'my name is X' or "I'm X".
-        name_match = re.search(r"(?:my name is|i am|i'm)\s+([A-Za-z][A-Za-z ]{1,80})", message, re.I)
-        if name_match:
-            applicant_data["name"] = name_match.group(1).strip()
+        if extraction.name:
+            applicant_data["name"] = extraction.name
+        if extraction.nid:
+            applicant_data["nid"] = extraction.nid
+        if extraction.age is not None:
+            applicant_data["age"] = extraction.age
 
         form_draft = self.form_filling_agent.run(applicant_data)
 

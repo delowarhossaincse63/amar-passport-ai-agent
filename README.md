@@ -2,8 +2,6 @@
 
 A compact, professional multi-agent assistant that guides Bangladesh e-passport applicants through eligibility checks, document verification, form drafting, and appointment planning.
 
-এই প্রোজেক্টটি সরল, পরিষ্কার এবং প্র্যাকটিক্যাল—যাকে কেউই দ্রুত বুঝে নিতে পারবে এবং প্রয়োগ করতে পারবে।
-
 --
 
 **Highlights**

@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ secrets.RAILWAY_API_TOKEN != '' }}
+    if: ${{ secrets.RAILWAY_TOKEN != '' || secrets.RAILWAY_API_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node.js
@@ -21,6 +21,6 @@ jobs:
 
       - name: Deploy to Railway
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN || secrets.RAILWAY_API_TOKEN }}
         run: |
           railway up --detach

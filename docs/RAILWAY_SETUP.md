@@ -30,7 +30,7 @@ Option 3 — Use Railway CLI from CI (advanced)
 Railway offers a CLI that can be run from CI to trigger deployments (`railway up`). This repository includes a sample workflow at `.github/workflows/railway-deploy.yml`.
 
 Required GitHub secrets:
-- `RAILWAY_API_TOKEN` — Railway API token with deploy permissions
+- `RAILWAY_TOKEN` — Railway API or project token with deploy permissions
 
 Once the secret is set, pushes to `main` will automatically run the workflow and trigger the Railway deploy.
 

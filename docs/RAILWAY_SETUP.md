@@ -27,7 +27,12 @@ Option 2 — Deploy via Docker image (push to GHCR, then point Railway at the im
 Option 3 — Use Railway CLI from CI (advanced)
 ----------------------------------------------
 
-Railway offers a CLI that can be run from CI to trigger deployments (`railway up`). If you prefer an automated CI trigger instead of the GitHub integration, add a GitHub Actions workflow that installs the Railway CLI and logs in with a Railway API token (set as a repository secret). Let me know if you want me to add a sample workflow for this.
+Railway offers a CLI that can be run from CI to trigger deployments (`railway up`). This repository includes a sample workflow at `.github/workflows/railway-deploy.yml`.
+
+Required GitHub secrets:
+- `RAILWAY_API_TOKEN` — Railway API token with deploy permissions
+
+Once the secret is set, pushes to `main` will automatically run the workflow and trigger the Railway deploy.
 
 Security reminder
 -----------------
